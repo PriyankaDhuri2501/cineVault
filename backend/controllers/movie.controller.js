@@ -12,12 +12,11 @@ export const getAllMovies = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
 
-  const movies = await Movie.find()
-    .populate('addedBy', 'username email')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+  // Build query
+  const query = Movie.find().populate('addedBy', 'username email');
 
+  // Execute query with pagination
+  const movies = await query.sort({ createdAt: -1 }).skip(skip).limit(limit);
   const total = await Movie.countDocuments();
 
   res.status(200).json({
@@ -121,6 +120,90 @@ export const deleteMovie = asyncHandler(async (req, res, next) => {
     status: 'success',
     message: 'Movie deleted successfully',
     data: null,
+  });
+});
+
+/**
+ * @route   GET /api/movies/search
+ * @desc    Search movies by name or description
+ * @access  Public
+ */
+export const searchMovies = asyncHandler(async (req, res, next) => {
+  const { q } = req.query; // Query parameter for search term
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  if (!q || q.trim() === '') {
+    return next(new ValidationError('Search query parameter "q" is required'));
+  }
+
+  // Use MongoDB text search (requires text index on title and description)
+  const searchQuery = {
+    $text: { $search: q.trim() },
+  };
+
+  // Execute search with pagination
+  const movies = await Movie.find(searchQuery)
+    .populate('addedBy', 'username email')
+    .sort({ score: { $meta: 'textScore' } }) // Sort by relevance score
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Movie.countDocuments(searchQuery);
+
+  res.status(200).json({
+    status: 'success',
+    results: movies.length,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+    query: q,
+    data: {
+      movies,
+    },
+  });
+});
+
+/**
+ * @route   GET /api/movies/sorted
+ * @desc    Get movies sorted by name, rating, release date, or duration
+ * @access  Public
+ */
+export const getSortedMovies = asyncHandler(async (req, res, next) => {
+  const { sortBy, order } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  // Define allowed sort fields
+  const allowedSortFields = ['title', 'rating', 'releaseDate', 'duration'];
+  const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+  const sortOrder = order === 'asc' ? 1 : -1;
+
+  // Build sort object
+  const sortObject = { [sortField]: sortOrder };
+
+  // Execute query with sorting and pagination
+  const movies = await Movie.find()
+    .populate('addedBy', 'username email')
+    .sort(sortObject)
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Movie.countDocuments();
+
+  res.status(200).json({
+    status: 'success',
+    results: movies.length,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+    sortBy: sortField,
+    order: sortOrder === 1 ? 'asc' : 'desc',
+    data: {
+      movies,
+    },
   });
 });
 

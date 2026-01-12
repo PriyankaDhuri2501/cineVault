@@ -6,6 +6,8 @@ import {
   createMovie,
   updateMovie,
   deleteMovie,
+  searchMovies,
+  getSortedMovies,
 } from '../controllers/movie.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/role.middleware.js';
@@ -51,9 +53,32 @@ const movieValidation = [
 ];
 
 /**
+ * @route   GET /api/movies/search
+ * @desc    Search movies by name or description
+ * @access  Public
+ * @query   q - Search query string
+ * @query   page - Page number (default: 1)
+ * @query   limit - Items per page (default: 10)
+ */
+router.get('/search', searchMovies);
+
+/**
+ * @route   GET /api/movies/sorted
+ * @desc    Get movies sorted by field
+ * @access  Public
+ * @query   sortBy - Field to sort by (title, rating, releaseDate, duration)
+ * @query   order - Sort order (asc, desc) - default: desc
+ * @query   page - Page number (default: 1)
+ * @query   limit - Items per page (default: 10)
+ */
+router.get('/sorted', getSortedMovies);
+
+/**
  * @route   GET /api/movies
  * @desc    Get all movies (with pagination)
  * @access  Public
+ * @query   page - Page number (default: 1)
+ * @query   limit - Items per page (default: 10)
  */
 router.get('/', getAllMovies);
 
