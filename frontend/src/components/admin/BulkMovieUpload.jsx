@@ -19,7 +19,7 @@ import {
 import api from '../../utils/api';
 
 const BulkMovieUpload = ({ onSuccess }) => {
-  const [movies, setMovies] = useState([{ title: '', description: '', releaseDate: '', duration: '', rating: '', poster: '' }]);
+  const [movies, setMovies] = useState([{ title: '', description: '', releaseDate: '', duration: '', rating: '', poster: '', trailerId: '', streamingLinks: '' }]);
   const [loading, setLoading] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +27,7 @@ const BulkMovieUpload = ({ onSuccess }) => {
   const [queueStatus, setQueueStatus] = useState(null);
 
   const handleAddRow = () => {
-    setMovies([...movies, { title: '', description: '', releaseDate: '', duration: '', rating: '', poster: '' }]);
+    setMovies([...movies, { title: '', description: '', releaseDate: '', duration: '', rating: '', poster: '', trailerId: '', streamingLinks: '' }]);
   };
 
   const handleRemoveRow = (index) => {
@@ -52,7 +52,18 @@ const BulkMovieUpload = ({ onSuccess }) => {
       try {
         const json = JSON.parse(event.target.result);
         if (Array.isArray(json)) {
-          setMovies(json);
+          // Ensure all movies have the required fields structure
+          const normalizedMovies = json.map(movie => ({
+            title: movie.title || '',
+            description: movie.description || '',
+            releaseDate: movie.releaseDate || '',
+            duration: movie.duration || '',
+            rating: movie.rating || '',
+            poster: movie.poster || '',
+            trailerId: movie.trailerId || '',
+            streamingLinks: movie.streamingLinks || [],
+          }));
+          setMovies(normalizedMovies);
           setSuccess(`Loaded ${json.length} movies from file`);
         } else {
           setError('File must contain a JSON array of movies');
@@ -94,14 +105,35 @@ const BulkMovieUpload = ({ onSuccess }) => {
       setSuccess('');
 
       // Format movies for API
-      const formattedMovies = movies.map(movie => ({
-        title: movie.title.trim(),
-        description: movie.description.trim(),
-        releaseDate: movie.releaseDate,
-        duration: parseInt(movie.duration),
-        rating: parseFloat(movie.rating),
-        poster: movie.poster?.trim() || '',
-      }));
+      const formattedMovies = [];
+      for (const movie of movies) {
+        // Parse streamingLinks if it's a string, otherwise use as-is
+        let streamingLinks = [];
+        if (movie.streamingLinks) {
+          if (typeof movie.streamingLinks === 'string') {
+            try {
+              streamingLinks = movie.streamingLinks.trim() ? JSON.parse(movie.streamingLinks) : [];
+            } catch (e) {
+              setError(`Invalid streamingLinks JSON format for movie: ${movie.title || 'Unknown'}. Please check the JSON format.`);
+              setLoading(false);
+              return;
+            }
+          } else if (Array.isArray(movie.streamingLinks)) {
+            streamingLinks = movie.streamingLinks;
+          }
+        }
+
+        formattedMovies.push({
+          title: movie.title.trim(),
+          description: movie.description.trim(),
+          releaseDate: movie.releaseDate,
+          duration: parseInt(movie.duration),
+          rating: parseFloat(movie.rating),
+          poster: movie.poster?.trim() || '',
+          trailerId: movie.trailerId?.trim() || '',
+          streamingLinks: streamingLinks,
+        });
+      }
 
       const response = await api.post('/movies/bulk', { movies: formattedMovies });
 
@@ -110,7 +142,7 @@ const BulkMovieUpload = ({ onSuccess }) => {
 
       // Clear form after successful submission
       setTimeout(() => {
-        setMovies([{ title: '', description: '', releaseDate: '', duration: '', rating: '', poster: '' }]);
+        setMovies([{ title: '', description: '', releaseDate: '', duration: '', rating: '', poster: '', trailerId: '', streamingLinks: '' }]);
         if (onSuccess) onSuccess();
       }, 2000);
     } catch (err) {
@@ -278,6 +310,29 @@ const BulkMovieUpload = ({ onSuccess }) => {
                 inputProps={{ min: 0, max: 10, step: 0.1 }}
                 required
               />
+              <TextField
+                fullWidth
+                label="YouTube Trailer ID (optional)"
+                value={movie.trailerId || ''}
+                onChange={(e) => handleChange(index, 'trailerId', e.target.value)}
+                size="small"
+                placeholder="dQw4w9WgXcQ"
+                helperText="11-character YouTube video ID"
+              />
+              <TextField
+                fullWidth
+                label="Streaming Links (optional - JSON array)"
+                value={typeof movie.streamingLinks === 'string' ? movie.streamingLinks : JSON.stringify(movie.streamingLinks || [], null, 2)}
+                onChange={(e) => handleChange(index, 'streamingLinks', e.target.value)}
+                size="small"
+                multiline
+                rows={3}
+                placeholder='[{"platform": "Netflix", "url": "https://..."}]'
+                helperText='JSON array: [{"platform": "Platform Name", "url": "https://..."}]'
+                sx={{
+                  gridColumn: { xs: '1 / -1', md: '1 / -1' },
+                }}
+              />
             </Box>
           </Box>
         ))}
@@ -321,7 +376,7 @@ const BulkMovieUpload = ({ onSuccess }) => {
         <Typography variant="body2" color="text.secondary" component="div">
           <ol style={{ margin: 0, paddingLeft: 20 }}>
             <li>Prepare a JSON file with an array of movie objects</li>
-            <li>Each movie should have: title, description, releaseDate (YYYY-MM-DD), duration (minutes), rating (0-10), poster (optional URL)</li>
+            <li>Each movie should have: title, description, releaseDate (YYYY-MM-DD), duration (minutes), rating (0-10), poster (optional URL), trailerId (optional), streamingLinks (optional array)</li>
             <li>Click "Upload JSON" and select your file</li>
             <li>Or manually add movies using the form above</li>
             <li>Click "Upload" to queue movies for processing</li>
@@ -349,7 +404,18 @@ const BulkMovieUpload = ({ onSuccess }) => {
     "releaseDate": "2024-01-15",
     "duration": 120,
     "rating": 8.5,
-    "poster": "https://example.com/poster.jpg"
+    "poster": "https://example.com/poster.jpg",
+    "trailerId": "dQw4w9WgXcQ",
+    "streamingLinks": [
+      {
+        "platform": "Netflix",
+        "url": "https://www.netflix.com/title/..."
+      },
+      {
+        "platform": "Amazon Prime",
+        "url": "https://www.amazon.com/..."
+      }
+    ]
   }
 ]`}
           </Box>
