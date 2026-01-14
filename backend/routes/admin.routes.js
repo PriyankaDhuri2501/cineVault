@@ -12,9 +12,6 @@ import { validate } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 
-/**
- * Validation rules for creating/updating admin users
- */
 const adminUserValidation = [
   body('username')
     .trim()
@@ -56,38 +53,17 @@ const updateUserValidation = [
     .withMessage('Role must be either "user" or "admin"'),
 ];
 
-/**
- * All routes require authentication and admin role
- */
+
+//All routes require authentication and admin role
 router.use(protect);
 router.use(isAdmin);
 
-/**
- * @route   GET /api/admin/users
- * @desc    Get all users
- * @access  Private/Admin
- */
 router.get('/users', getAllUsers);
 
-/**
- * @route   POST /api/admin/users
- * @desc    Create a new admin/user
- * @access  Private/Admin
- */
 router.post('/users', adminUserValidation, validate, createAdmin);
 
-/**
- * @route   PUT /api/admin/users/:id
- * @desc    Update a user
- * @access  Private/Admin
- */
 router.put('/users/:id', updateUserValidation, validate, updateUser);
 
-/**
- * @route   DELETE /api/admin/users/:id
- * @desc    Delete a user
- * @access  Private/Admin
- */
 router.delete('/users/:id', deleteUser);
 
 export default router;

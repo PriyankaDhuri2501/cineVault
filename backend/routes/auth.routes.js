@@ -7,9 +7,6 @@ import { validate } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 
-/**
- * Validation rules for signup
- */
 const signupValidation = [
   body('username')
     .trim()
@@ -27,9 +24,7 @@ const signupValidation = [
     .withMessage('Password must be at least 6 characters long'),
 ];
 
-/**
- * Validation rules for login
- */
+
 const loginValidation = [
   body('emailOrUsername')
     .notEmpty()
@@ -37,25 +32,11 @@ const loginValidation = [
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
-/**
- * @route   POST /api/auth/signup
- * @desc    Register a new user
- * @access  Public
- */
+
 router.post('/signup', authLimiter, signupValidation, validate, signup);
 
-/**
- * @route   POST /api/auth/login
- * @desc    Login user
- * @access  Public
- */
 router.post('/login', authLimiter, loginValidation, validate, login);
 
-/**
- * @route   GET /api/auth/me
- * @desc    Get current user
- * @access  Protected
- */
 router.get('/me', protect, getMe);
 
 export default router;

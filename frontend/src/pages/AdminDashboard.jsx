@@ -113,7 +113,6 @@ const AdminDashboard = () => {
                           err.response?.data?.error?.message || 
                           'Operation failed. Please check all fields and try again.';
       setError(errorMessage);
-      // Don't close dialog on error so user can fix issues
     } finally {
       setSubmitting(false);
     }

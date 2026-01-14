@@ -29,7 +29,7 @@ const HomePage = () => {
   const [total, setTotal] = useState(0);
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
-  const [limit] = useState(12); // Movies per page
+  const [limit] = useState(12); 
 
   useEffect(() => {
     fetchMovies();
@@ -42,7 +42,6 @@ const HomePage = () => {
 
       let response;
       if (sortBy === 'createdAt') {
-        // Default: get all movies with pagination
         response = await api.get('/movies', {
           params: {
             page,
@@ -50,7 +49,6 @@ const HomePage = () => {
           },
         });
       } else {
-        // Sorted movies
         response = await api.get('/movies/sorted', {
           params: {
             sortBy,
@@ -88,7 +86,7 @@ const HomePage = () => {
       setSortBy(value);
       setSortOrder('desc');
     }
-    setPage(1); // Reset to first page when sorting changes
+    setPage(1); 
   };
 
   return (

@@ -2,10 +2,6 @@ import { AppError } from '../utils/errors.js';
 import { formatError } from '../utils/helpers.js';
 import { sanitizeError } from '../utils/responseSanitizer.js';
 
-/**
- * Global Error Handling Middleware
- * Catches all errors and sends appropriate responses
- */
 
 export const errorHandler = (err, req, res, next) => {
   // Default error

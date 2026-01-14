@@ -4,18 +4,6 @@ import { jwtConfig } from '../config/jwt.js';
 import User from '../models/User.js';
 import { asyncHandler } from '../utils/helpers.js';
 
-/**
- * Authentication Middleware
- * Verifies JWT token and attaches user to request object
- * 
- * Flow:
- * 1. Extract token from Authorization header
- * 2. Verify token signature
- * 3. Decode token to get userId
- * 4. Fetch user from database
- * 5. Attach user to req.user
- * 6. Continue to next middleware
- */
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -34,8 +22,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, jwtConfig.secret);
 
-    // Get user from token (decoded contains userId from token payload)
-    // select('+password') is not needed here since we only verify role
+    // Get user from token (decoded contains userId from token payload)    // select('+password') is not needed here since we only verify role
     const user = await User.findById(decoded.userId);
 
     if (!user) {

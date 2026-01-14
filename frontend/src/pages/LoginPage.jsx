@@ -38,18 +38,17 @@ const LoginPage = () => {
   // Get redirect path from location state or default to home
   const from = location.state?.from?.pathname || '/';
   
-  // Check if coming from signup page
   useEffect(() => {
     if (location.state?.fromSignup) {
       setSuccess(location.state?.message || 'Account created successfully! Please login.');
-      // Pre-fill email if provided
+      
       if (location.state?.emailOrUsername) {
         setFormData(prev => ({
           ...prev,
           emailOrUsername: location.state.emailOrUsername,
         }));
       }
-      // Clear location state after using it
+      
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
@@ -59,7 +58,7 @@ const LoginPage = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setError(''); // Clear error on input change
+    setError(''); 
   };
 
   const handleSubmit = async (e) => {
@@ -79,7 +78,7 @@ const LoginPage = () => {
       setError(result.error);
       setLoading(false);
     }
-    // Navigation is handled by AuthContext after successful login
+ 
   };
 
   return (

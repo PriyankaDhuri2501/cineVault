@@ -43,7 +43,7 @@ const SignupPage = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setError(''); // Clear error on input change
+    setError(''); 
   };
 
   const validateForm = () => {
@@ -97,11 +97,9 @@ const SignupPage = () => {
       setError(result.error);
       setLoading(false);
     } else {
-      // Show success message
       setSuccess(true);
       setLoading(false);
       
-      // Redirect to login page after 2 seconds
       setTimeout(() => {
         navigate('/login', {
           state: {

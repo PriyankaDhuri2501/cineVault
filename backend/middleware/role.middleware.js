@@ -1,16 +1,5 @@
 import { ForbiddenError } from '../utils/errors.js';
 
-/**
- * Role-Based Access Control Middleware
- * Checks if user has required role (admin) to access route
- * 
- * Flow:
- * 1. Check if user is authenticated (req.user should exist from protect middleware)
- * 2. Verify user role is 'admin'
- * 3. Allow or deny access
- * 
- * Must be used AFTER protect middleware
- */
 export const authorize = (...roles) => {
   return (req, res, next) => {
     // Check if user exists (should be set by protect middleware)

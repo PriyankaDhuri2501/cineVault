@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-/**
- * User Schema
- * Stores user authentication information and role
- */
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -39,22 +35,17 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true, 
   }
 );
 
-/**
- * Hash password before saving
- * Runs before document is saved to database
- */
+
 userSchema.pre('save', async function (next) {
-  // Only hash password if it's been modified (or is new)
   if (!this.isModified('password')) {
     return next();
   }
 
   try {
-    // Hash password with cost of 12
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -63,18 +54,11 @@ userSchema.pre('save', async function (next) {
   }
 });
 
-/**
- * Instance method to compare password
- * Used during login to verify password
- */
+
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-/**
- * Instance method to remove password from user object
- * For sending user data without password
- */
 userSchema.methods.toJSON = function () {
   const userObject = this.toObject();
   delete userObject.password;

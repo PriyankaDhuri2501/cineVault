@@ -32,12 +32,10 @@ export const createAdmin = asyncHandler(async (req, res, next) => {
     return next(new ValidationError('Please provide username, email, and password'));
   }
 
-  // Validate role
   if (role && !['user', 'admin'].includes(role)) {
     return next(new ValidationError('Role must be either "user" or "admin"'));
   }
 
-  // Check if user already exists
   const existingUser = await User.findOne({
     $or: [{ email }, { username }],
   });
@@ -46,7 +44,7 @@ export const createAdmin = asyncHandler(async (req, res, next) => {
     return next(new ValidationError('User with this email or username already exists'));
   }
 
-  // Create user (default to admin role for admin-created users)
+  
   const user = await User.create({
     username,
     email,
@@ -54,7 +52,6 @@ export const createAdmin = asyncHandler(async (req, res, next) => {
     role: role || 'admin',
   });
 
-  // Remove password from response
   const userResponse = user.toObject();
   delete userResponse.password;
 
@@ -87,14 +84,13 @@ export const updateUser = asyncHandler(async (req, res, next) => {
     return next(new NotFoundError('User not found'));
   }
 
-  // Update fields
+
   if (username) user.username = username;
   if (email) user.email = email;
   if (role && ['user', 'admin'].includes(role)) user.role = role;
 
   await user.save();
 
-  // Remove password from response
   const userResponse = user.toObject();
   delete userResponse.password;
 

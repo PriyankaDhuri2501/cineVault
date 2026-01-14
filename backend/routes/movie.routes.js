@@ -17,9 +17,7 @@ import { validate } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 
-/**
- * Validation rules for creating/updating movies
- */
+
 const movieValidation = [
   body('title')
     .trim()
@@ -72,14 +70,7 @@ const movieValidation = [
     .withMessage('Streaming link must be a valid URL'),
 ];
 
-/**
- * @route   GET /api/movies/search
- * @desc    Search movies by name or description
- * @access  Public
- * @query   q - Search query string
- * @query   page - Page number (default: 1)
- * @query   limit - Items per page (default: 10)
- */
+
 router.get('/search', searchMovies);
 
 /**
@@ -102,46 +93,16 @@ router.get('/sorted', getSortedMovies);
  */
 router.get('/', getAllMovies);
 
-/**
- * @route   GET /api/movies/:id
- * @desc    Get single movie by ID
- * @access  Public
- */
 router.get('/:id', getMovieById);
 
-/**
- * @route   POST /api/movies
- * @desc    Create a new movie
- * @access  Private/Admin
- */
 router.post('/', protect, isAdmin, movieValidation, validate, createMovie);
 
-/**
- * @route   POST /api/movies/bulk
- * @desc    Create multiple movies using queue (bulk upload)
- * @access  Private/Admin
- */
 router.post('/bulk', protect, isAdmin, createBulkMovies);
 
-/**
- * @route   GET /api/movies/queue/status
- * @desc    Get queue processing status
- * @access  Private/Admin
- */
 router.get('/queue/status', protect, isAdmin, getQueueStatus);
 
-/**
- * @route   PUT /api/movies/:id
- * @desc    Update a movie
- * @access  Private/Admin
- */
 router.put('/:id', protect, isAdmin, movieValidation, validate, updateMovie);
 
-/**
- * @route   DELETE /api/movies/:id
- * @desc    Delete a movie
- * @access  Private/Admin
- */
 router.delete('/:id', protect, isAdmin, deleteMovie);
 
 export default router;

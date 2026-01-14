@@ -1,9 +1,4 @@
 import mongoose from 'mongoose';
-
-/**
- * Movie Schema
- * Stores movie information
- */
 const movieSchema = new mongoose.Schema(
   {
     title: {
@@ -46,7 +41,7 @@ const movieSchema = new mongoose.Schema(
       default: '',
       validate: {
         validator: function(v) {
-          // YouTube video ID is typically 11 characters, but we allow empty string
+         
           return !v || /^[a-zA-Z0-9_-]{11}$/.test(v);
         },
         message: 'Trailer ID must be a valid YouTube video ID (11 characters)',
@@ -84,12 +79,12 @@ const movieSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
-// Create indexes for better query performance
-movieSchema.index({ title: 'text', description: 'text' }); // Text search index
+
+movieSchema.index({ title: 'text', description: 'text' });
 movieSchema.index({ releaseDate: 1 });
 movieSchema.index({ rating: -1 });
 movieSchema.index({ duration: 1 });

@@ -1,9 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-/**
- * Custom Material UI Theme
- * Dark theme inspired by Netflix/IMDb/Prime Video
- */
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -90,7 +86,7 @@ const theme = createTheme({
     },
     button: {
       fontWeight: 500,
-      textTransform: 'none', // Don't capitalize button text
+      textTransform: 'none', 
     },
   },
   shape: {
