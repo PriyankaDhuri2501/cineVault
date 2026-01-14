@@ -1,16 +1,3 @@
-/**
- * Simple Queue System for Bulk Movie Insertion
- * 
- * This queue processes movie insertions asynchronously to avoid blocking
- * the API response when adding multiple movies at once.
- * 
- * How it works:
- * 1. Movies are added to the queue
- * 2. Queue processes items in batches
- * 3. Returns immediately to user
- * 4. Processes in background
- */
-
 class SimpleQueue {
   constructor(processor, batchSize = 10, delay = 100) {
     this.queue = [];
@@ -39,9 +26,6 @@ class SimpleQueue {
     this.process();
   }
 
-  /**
-   * Process queue items in batches
-   */
   async process() {
     if (this.processing || this.queue.length === 0) {
       return;
@@ -64,7 +48,6 @@ class SimpleQueue {
         console.error('Queue processing error:', error);
       }
 
-      // Small delay between batches to avoid overwhelming the database
       if (this.queue.length > 0) {
         await new Promise(resolve => setTimeout(resolve, this.delay));
       }
@@ -73,9 +56,7 @@ class SimpleQueue {
     this.processing = false;
   }
 
-  /**
-   * Get queue status
-   */
+
   getStatus() {
     return {
       queueLength: this.queue.length,
@@ -84,9 +65,7 @@ class SimpleQueue {
     };
   }
 
-  /**
-   * Clear queue and reset stats
-   */
+//Clear queue and reset stats
   clear() {
     this.queue = [];
     this.stats = {

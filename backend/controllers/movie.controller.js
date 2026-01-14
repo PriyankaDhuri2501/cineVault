@@ -4,24 +4,19 @@ import { sanitizeMovie, sanitizeMovies } from '../utils/responseSanitizer.js';
 import movieQueue from '../utils/movieQueue.js';
 import Movie from '../models/Movie.js';
 
-/**
- * @route   GET /api/movies
- * @desc    Get all movies with pagination (optimized)
- * @access  Public
- */
+
 export const getAllMovies = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = Math.min(parseInt(req.query.limit) || 10, 100); // Max 100 per page
   const skip = (page - 1) * limit;
 
-  // Optimized query: use lean() for better performance, select only needed fields
   const movies = await Movie.find()
     .select('title description releaseDate duration rating poster trailerId streamingLinks addedBy createdAt')
     .populate('addedBy', 'username email')
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
-    .lean(); // Use lean() for read-only queries (faster)
+    .lean(); 
 
   // Get total count (optimized with estimatedDocumentCount for large collections)
   const total = await Movie.estimatedDocumentCount();
@@ -41,11 +36,7 @@ export const getAllMovies = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   GET /api/movies/:id
- * @desc    Get single movie by ID (optimized)
- * @access  Public
- */
+
 export const getMovieById = asyncHandler(async (req, res, next) => {
   const movie = await Movie.findById(req.params.id)
     .select('title description releaseDate duration rating poster trailerId streamingLinks addedBy createdAt')
@@ -67,11 +58,7 @@ export const getMovieById = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   POST /api/movies
- * @desc    Create a new movie (Admin only)
- * @access  Private/Admin
- */
+
 export const createMovie = asyncHandler(async (req, res, next) => {
   // Add the admin user ID to the movie
   req.body.addedBy = req.user._id;
@@ -90,11 +77,7 @@ export const createMovie = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   POST /api/movies/bulk
- * @desc    Create multiple movies using queue (Admin only)
- * @access  Private/Admin
- */
+
 export const createBulkMovies = asyncHandler(async (req, res, next) => {
   const { movies } = req.body;
 
@@ -116,13 +99,11 @@ export const createBulkMovies = asyncHandler(async (req, res, next) => {
 
   movies.forEach((movie, index) => {
     try {
-      // Basic validation
       if (!movie.title || !movie.description || !movie.releaseDate || !movie.duration || !movie.rating) {
         errors.push({ index, error: 'Missing required fields' });
         return;
       }
 
-      // Add admin user ID
       validatedMovies.push({
         ...movie,
         addedBy: req.user._id,
@@ -154,11 +135,7 @@ export const createBulkMovies = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   GET /api/movies/queue/status
- * @desc    Get queue status (Admin only)
- * @access  Private/Admin
- */
+
 export const getQueueStatus = asyncHandler(async (req, res, next) => {
   const status = movieQueue.getStatus();
 
@@ -170,11 +147,7 @@ export const getQueueStatus = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   PUT /api/movies/:id
- * @desc    Update a movie (Admin only)
- * @access  Private/Admin
- */
+
 export const updateMovie = asyncHandler(async (req, res, next) => {
   const movie = await Movie.findById(req.params.id);
 
@@ -201,11 +174,6 @@ export const updateMovie = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   DELETE /api/movies/:id
- * @desc    Delete a movie (Admin only)
- * @access  Private/Admin
- */
 export const deleteMovie = asyncHandler(async (req, res, next) => {
   const movie = await Movie.findById(req.params.id);
 
@@ -222,11 +190,7 @@ export const deleteMovie = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   GET /api/movies/search
- * @desc    Search movies by name or description (supports partial matching)
- * @access  Public
- */
+
 export const searchMovies = asyncHandler(async (req, res, next) => {
   const { q } = req.query; // Query parameter for search term
   const page = parseInt(req.query.page) || 1;
@@ -238,7 +202,6 @@ export const searchMovies = asyncHandler(async (req, res, next) => {
   }
 
   // Use regex for partial matching (case-insensitive)
-  // This allows searching for "goo" to find "good"
   const searchTerm = q.trim();
   const searchRegex = new RegExp(searchTerm, 'i'); // 'i' flag for case-insensitive
 
@@ -276,11 +239,7 @@ export const searchMovies = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * @route   GET /api/movies/sorted
- * @desc    Get movies sorted by name, rating, release date, or duration
- * @access  Public
- */
+
 export const getSortedMovies = asyncHandler(async (req, res, next) => {
   const { sortBy, order } = req.query;
   const page = parseInt(req.query.page) || 1;

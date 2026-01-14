@@ -1,7 +1,3 @@
-/**
- * Custom Error Classes
- * For better error handling and status codes
- */
 
 export class AppError extends Error {
   constructor(message, statusCode) {

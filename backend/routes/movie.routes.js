@@ -73,24 +73,8 @@ const movieValidation = [
 
 router.get('/search', searchMovies);
 
-/**
- * @route   GET /api/movies/sorted
- * @desc    Get movies sorted by field
- * @access  Public
- * @query   sortBy - Field to sort by (title, rating, releaseDate, duration)
- * @query   order - Sort order (asc, desc) - default: desc
- * @query   page - Page number (default: 1)
- * @query   limit - Items per page (default: 10)
- */
 router.get('/sorted', getSortedMovies);
 
-/**
- * @route   GET /api/movies
- * @desc    Get all movies (with pagination)
- * @access  Public
- * @query   page - Page number (default: 1)
- * @query   limit - Items per page (default: 10)
- */
 router.get('/', getAllMovies);
 
 router.get('/:id', getMovieById);

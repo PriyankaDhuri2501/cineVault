@@ -1,12 +1,3 @@
-/**
- * Response Sanitizer
- * Removes sensitive data and ensures secure API responses
- */
-
-/**
- * Sanitize movie data
- * Removes internal fields and ensures safe response
- */
 export const sanitizeMovie = (movie) => {
   if (!movie) return null;
 
@@ -15,25 +6,17 @@ export const sanitizeMovie = (movie) => {
   // Remove sensitive/internal fields
   const {
     __v,
-    // Keep other fields as they're safe
     ...sanitized
   } = movieObj;
 
   return sanitized;
 };
 
-/**
- * Sanitize array of movies
- */
 export const sanitizeMovies = (movies) => {
   if (!Array.isArray(movies)) return [];
   return movies.map(movie => sanitizeMovie(movie));
 };
 
-/**
- * Sanitize user data
- * Removes password and sensitive fields
- */
 export const sanitizeUser = (user) => {
   if (!user) return null;
 
@@ -48,10 +31,9 @@ export const sanitizeUser = (user) => {
   return sanitized;
 };
 
-/**
- * Sanitize error response
- * Don't expose stack traces or internal errors in production
- */
+
+//Don't expose stack traces or internal errors in production
+ 
 export const sanitizeError = (error, isDevelopment = false) => {
   const sanitized = {
     message: error.message || 'An error occurred',
