@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -15,6 +15,8 @@ import { useAuth } from './context/AuthContext';
 
 function App() {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/login';
 
   return (
     <Box
@@ -94,7 +96,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Box>
-      <Footer />
+      {!isAuthPage && <Footer />}
     </Box>
   );
 }

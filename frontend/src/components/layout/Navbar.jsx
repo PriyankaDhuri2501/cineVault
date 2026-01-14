@@ -30,6 +30,7 @@ const Navbar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
+  const isAuthPage = location.pathname === '/login';
   const [anchorEl, setAnchorEl] = useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,6 +97,116 @@ const Navbar = () => {
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
+
+  // Minimal navbar on login page: show only logo
+  if (isAuthPage) {
+    return (
+      <AppBar
+        position="sticky"
+        sx={{
+          backgroundColor: '#0a0a0a',
+          boxShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <Toolbar sx={{ py: 1 }}>
+          {/* Logo - CineVault */}
+          <Box
+            component={Link}
+            to="/"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none',
+            }}
+          >
+            {/* Logo Mark: Vault + Film Reel */}
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle at 30% 30%, #f5c518 0, #b20710 45%, #0a0a0a 75%)',
+                border: '2px solid rgba(245, 197, 24, 0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                boxShadow: '0 0 12px rgba(0,0,0,0.8)',
+                mr: 1.5,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: '50%',
+                  border: '2px solid rgba(255,255,255,0.6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                }}
+              >
+                {['0deg', '90deg', '180deg', '270deg'].map((angle) => (
+                  <Box
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={angle}
+                    sx={{
+                      width: 3,
+                      height: 3,
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      position: 'absolute',
+                      transform: `rotate(${angle}) translate(7px)`,
+                    }}
+                  />
+                ))}
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 2,
+                    borderRadius: 1,
+                    backgroundColor: 'rgba(255,255,255,0.85)',
+                  }}
+                />
+              </Box>
+            </Box>
+
+            {/* Wordmark */}
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 800,
+                  letterSpacing: 2,
+                  lineHeight: 1,
+                }}
+              >
+                <Box component="span" sx={{ color: 'primary.main' }}>
+                  CINE
+                </Box>
+                <Box component="span" sx={{ color: 'secondary.main' }}>
+                  VAULT
+                </Box>
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                  letterSpacing: 2,
+                  textTransform: 'uppercase',
+                  fontSize: '0.6rem',
+                }}
+              >
+                Secure Your Watchlist
+              </Typography>
+            </Box>
+          </Box>
+        </Toolbar>
+      </AppBar>
+    );
+  }
 
   return (
     <AppBar
@@ -274,34 +385,19 @@ const Navbar = () => {
               Home
             </Button>
             {isAuthenticated && (
-              <>
-                <Button
-                  component={Link}
-                  to="/watchlist"
-                  color="inherit"
-                  sx={{
-                    color: 'text.primary',
-                    '&:hover': {
-                      backgroundColor: alpha(theme.palette.common.white, 0.1),
-                    },
-                  }}
-                >
-                  Watchlist
-                </Button>
-                <Button
-                  component={Link}
-                  to="/recently-viewed"
-                  color="inherit"
-                  sx={{
-                    color: 'text.primary',
-                    '&:hover': {
-                      backgroundColor: alpha(theme.palette.common.white, 0.1),
-                    },
-                  }}
-                >
-                  Recently Viewed
-                </Button>
-              </>
+              <Button
+                component={Link}
+                to="/watchlist"
+                color="inherit"
+                sx={{
+                  color: 'text.primary',
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.common.white, 0.1),
+                  },
+                }}
+              >
+                Watchlist
+              </Button>
             )}
             {isAuthenticated ? (
               <>
@@ -391,12 +487,19 @@ const Navbar = () => {
           </MenuItem>
           {isAuthenticated ? (
             <>
+              <MenuItem
+                component={Link}
+                to="/watchlist"
+                onClick={handleMenuClose}
+              >
+                Watchlist
+              </MenuItem>
               {isAdmin && (
-          <MenuItem
-            component={Link}
+                <MenuItem
+                  component={Link}
                   to="/admin/dashboard"
-            onClick={handleMenuClose}
-          >
+                  onClick={handleMenuClose}
+                >
                   Dashboard
                 </MenuItem>
               )}
@@ -404,15 +507,15 @@ const Navbar = () => {
               <MenuItem onClick={handleLogout}>
                 <LogoutIcon sx={{ mr: 1 }} />
                 Logout
-          </MenuItem>
+              </MenuItem>
             </>
           ) : (
-          <MenuItem
-            component={Link}
-            to="/login"
-            onClick={handleMenuClose}
-          >
-            Login
+            <MenuItem
+              component={Link}
+              to="/login"
+              onClick={handleMenuClose}
+            >
+              Login
             </MenuItem>
           )}
         </Menu>

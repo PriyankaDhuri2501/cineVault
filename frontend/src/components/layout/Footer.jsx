@@ -22,13 +22,13 @@ const Footer = () => {
                 mb: 2,
               }}
             >
-              MOVIE
+              CINE
               <Box component="span" sx={{ color: 'secondary.main' }}>
-                APP
+                VAULT
               </Box>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Your ultimate destination for movie information and reviews.
+              Your secure destination for cinematic discoveries and watchlists.
             </Typography>
           </Grid>
 
@@ -89,7 +89,7 @@ const Footer = () => {
           }}
         >
           <Typography variant="body2" color="text.secondary">
-            © {new Date().getFullYear()} Movie App. All rights reserved.
+            © {new Date().getFullYear()} CineVault. All rights reserved.
           </Typography>
         </Box>
       </Container>
