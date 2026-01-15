@@ -3,7 +3,6 @@
 A full-stack movie management application built with the MERN stack (MongoDB, Express.js, React, Node.js). CineVault provides a premium movie browsing experience with features like watchlists, recently viewed movies, trailer viewing, and comprehensive admin controls.
 
 ![CineVault](https://img.shields.io/badge/CineVault-MERN%20Stack-red?style=for-the-badge)
-![License](https://img.shields.io/badge/license-ISC-blue?style=for-the-badge)
 
 ## 🎬 Features
 
@@ -26,7 +25,7 @@ A full-stack movie management application built with the MERN stack (MongoDB, Ex
 
 ## 🚀 Live Application
 
-**Live URL**: [Add your deployed application URL here]
+**Live URL**: https://cine-vault-nu.vercel.app/
 
 ## 📋 Prerequisites
 
@@ -41,8 +40,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/cinevault.git
-cd cinevault
+git clone https://github.com/PriyankaDhuri2501/cineVault.git
+cd cineVault
 ```
 
 ### 2. Backend Setup
@@ -57,25 +56,6 @@ npm install
 # Create a .env file in the backend directory
 touch .env
 ```
-
-**Configure the `.env` file** with the following variables:
-
-```env
-# Server Configuration
-PORT=5000
-NODE_ENV=development
-
-# MongoDB Configuration
-MONGODB_URI=mongodb://localhost:27017/cinevault
-# OR for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/cinevault?retryWrites=true&w=majority
-
-# JWT Configuration
-JWT_SECRET=your_super_secret_jwt_key_here_change_this_in_production
-JWT_EXPIRE=7d
-
-# Frontend URL (for CORS)
-FRONTEND_URL=http://localhost:5173
 
 # Admin Credentials (Optional - defaults provided)
 ADMIN_USERNAME=admin
@@ -139,65 +119,6 @@ The frontend will run on `http://localhost:5173`
 http://localhost:5000/api
 ```
 
-### Authentication Endpoints
-
-#### Register User
-```http
-POST /api/auth/signup
-Content-Type: application/json
-
-{
-  "username": "johndoe",
-  "email": "john@gmail.com",
-  "password": "password123"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "User registered successfully",
-  "data": {
-    "user": {
-      "id": "...",
-      "username": "johndoe",
-      "email": "john@gmail.com",
-      "role": "user"
-    },
-    "token": "jwt_token_here"
-  }
-}
-```
-
-#### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "emailOrUsername": "admin@gmail.com",
-  "password": "admin123"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Login successful",
-  "data": {
-    "user": {
-      "id": "...",
-      "username": "admin",
-      "email": "admin@gmail.com",
-      "role": "admin"
-    },
-    "token": "jwt_token_here"
-  }
-}
-```
-
 #### Get Current User
 ```http
 GET /api/auth/me
@@ -241,71 +162,8 @@ GET /api/movies/sorted?sortBy=rating&order=desc&page=1&limit=10
 - `page` (optional): Page number
 - `limit` (optional): Items per page
 
-#### Create Movie (Admin Only)
-```http
-POST /api/movies
-Authorization: Bearer <admin_token>
-Content-Type: application/json
-
-{
-  "title": "The Dark Knight",
-  "description": "When the menace known as the Joker wreaks havoc...",
-  "releaseDate": "2008-07-18",
-  "duration": 152,
-  "rating": 9.0,
-  "poster": "https://example.com/poster.jpg",
-  "trailerId": "EXeTwQWrcwY",
-  "streamingLinks": [
-    {
-      "platform": "Netflix",
-      "url": "https://www.netflix.com/title/70079583"
-    }
-  ]
-}
 ```
 
-#### Bulk Create Movies (Admin Only)
-```http
-POST /api/movies/bulk
-Authorization: Bearer <admin_token>
-Content-Type: application/json
-
-{
-  "movies": [
-    {
-      "title": "Movie 1",
-      "description": "Description 1",
-      "releaseDate": "2020-01-01",
-      "duration": 120,
-      "rating": 8.5,
-      "poster": "https://example.com/poster1.jpg",
-      "trailerId": "video_id_1",
-      "streamingLinks": []
-    },
-    {
-      "title": "Movie 2",
-      "description": "Description 2",
-      "releaseDate": "2021-01-01",
-      "duration": 110,
-      "rating": 7.5,
-      "poster": "https://example.com/poster2.jpg"
-    }
-  ]
-}
-```
-
-**Response:**
-```json
-{
-  "status": "accepted",
-  "message": "2 movie(s) queued for processing",
-  "data": {
-    "queued": 2,
-    "totalInQueue": 2,
-    "processing": false
-  }
-}
-```
 
 #### Get Queue Status (Admin Only)
 ```http
@@ -383,39 +241,6 @@ After running the `npm run create-admin` script, you can login with:
 
 > ⚠️ **Security Note**: These are default credentials for initial setup. Please change the password immediately after first login in a production environment.
 
-## 📁 Project Structure
-
-```
-cinevault/
-├── backend/
-│   ├── config/           # Database and JWT configuration
-│   ├── controllers/      # Route controllers
-│   ├── middleware/       # Authentication, validation, error handling
-│   ├── models/           # MongoDB schemas
-│   ├── routes/           # API routes
-│   ├── scripts/          # Utility scripts (createAdmin.js)
-│   ├── utils/            # Helper functions and utilities
-│   ├── .env              # Environment variables (create this)
-│   ├── package.json
-│   └── server.js         # Entry point
-│
-├── frontend/
-│   ├── public/           # Static assets
-│   ├── src/
-│   │   ├── components/   # React components
-│   │   │   ├── admin/    # Admin-specific components
-│   │   │   ├── auth/     # Authentication components
-│   │   │   ├── layout/   # Layout components (Navbar, Footer)
-│   │   │   └── movies/   # Movie-related components
-│   │   ├── context/      # React Context (Auth, Watchlist)
-│   │   ├── pages/        # Page components
-│   │   ├── theme/        # Material-UI theme configuration
-│   │   └── utils/        # Utility functions
-│   ├── package.json
-│   └── vite.config.js
-│
-└── README.md
-```
 
 ## 🛡️ Security Features
 
@@ -448,49 +273,6 @@ cinevault/
 
 ## 📝 Bulk Movie Upload
 
-### JSON Format Example
-
-Create a JSON file with the following structure:
-
-```json
-[
-  {
-    "title": "The Dark Knight",
-    "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-    "releaseDate": "2008-07-18",
-    "duration": 152,
-    "rating": 9.0,
-    "poster": "https://example.com/posters/dark-knight.jpg",
-    "trailerId": "EXeTwQWrcwY",
-    "streamingLinks": [
-      {
-        "platform": "Netflix",
-        "url": "https://www.netflix.com/title/70079583"
-      },
-      {
-        "platform": "Amazon Prime Video",
-        "url": "https://www.amazon.com/dp/B001V9N4YW"
-      }
-    ]
-  },
-  {
-    "title": "Inception",
-    "description": "A skilled thief is given a chance at redemption if he can pull off an impossible task: Inception, planting an idea in someone's mind.",
-    "releaseDate": "2010-07-16",
-    "duration": 148,
-    "rating": 8.8,
-    "poster": "https://example.com/posters/inception.jpg",
-    "trailerId": "YoHD9xeInc0",
-    "streamingLinks": [
-      {
-        "platform": "HBO Max",
-        "url": "https://www.hbomax.com/feature/inception"
-      }
-    ]
-  }
-]
-```
-
 **Required Fields:**
 - `title` (string)
 - `description` (string)
@@ -503,36 +285,13 @@ Create a JSON file with the following structure:
 - `trailerId` (string, 11-character YouTube video ID)
 - `streamingLinks` (array of objects with `platform` and `url`)
 
-## 🚀 Deployment
-
-### Backend Deployment (Example: Heroku/Railway/Render)
-
-1. Set environment variables in your hosting platform
-2. Ensure MongoDB connection string is set
-3. Deploy the backend directory
-4. Update `FRONTEND_URL` in `.env` to your frontend URL
-
-### Frontend Deployment (Example: Vercel/Netlify)
-
-1. Build the frontend:
-   ```bash
-   cd frontend
-   npm run build
-   ```
-2. Deploy the `dist` folder
-3. Update API base URL in `frontend/src/utils/api.js` if needed
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
-
-This project is licensed under the ISC License.
-
 ## 👤 Author
 
-[Your Name]
+[Priyanka Dhuri]
 
 ## 🙏 Acknowledgments
 
@@ -541,5 +300,3 @@ This project is licensed under the ISC License.
 - All the open-source contributors
 
 ---
-
-**Note**: This is a project built for demonstration purposes. Ensure proper security measures are in place before deploying to production.
