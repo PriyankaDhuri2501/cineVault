@@ -5,29 +5,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    // Proxy only for local development
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false,
       },
     },
-  },
-  // Production build configuration
-  build: {
-    // Ensure no localhost references in production
-    rollupOptions: {
-      output: {
-        // Prevent exposing internal paths
-        sanitizeFileName: true,
-      },
-    },
-  },
-  // Explicitly disable features that might trigger network permissions
-  preview: {
-    port: 4173,
-    strictPort: true,
   },
 })
 

@@ -6,46 +6,6 @@
 
 import app from './app.js';
 import connectDB from './config/database.js';
-import { jwtConfig } from './config/jwt.js';
-
-// Validate critical environment variables on startup
-const validateEnvironment = () => {
-  const requiredVars = [];
-  const warnings = [];
-  
-  // Check MongoDB URI
-  if (!process.env.MONGODB_URI) {
-    requiredVars.push('MONGODB_URI');
-  }
-  
-  // JWT_SECRET validation is handled in jwt.js, but we can check here too
-  try {
-    // This will throw if JWT_SECRET is missing in production
-    const _ = jwtConfig.secret;
-  } catch (error) {
-    if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
-      requiredVars.push('JWT_SECRET');
-    } else {
-      warnings.push('JWT_SECRET not set (using fallback - NOT SECURE)');
-    }
-  }
-  
-  if (requiredVars.length > 0) {
-    console.error('❌ Missing required environment variables:');
-    requiredVars.forEach(v => console.error(`   - ${v}`));
-    console.error('\nPlease set these in your .env file or Vercel environment variables.');
-    process.exit(1);
-  }
-  
-  if (warnings.length > 0) {
-    warnings.forEach(w => console.warn(`⚠️  ${w}`));
-  }
-  
-  console.log('✅ Environment variables validated');
-};
-
-// Validate environment before starting
-validateEnvironment();
 
 // Connect to MongoDB for local development
 connectDB();

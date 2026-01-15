@@ -54,23 +54,17 @@ app.use(
   })
 );
 
-// Request body size limits (prevent DoS attacks)
-app.use(express.json({ limit: '10mb' })); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded bodies
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Apply rate limiting to all routes
 app.use('/api', apiLimiter);
 
 // Health check endpoint
-app.get('/health', async (req, res) => {
-  const mongoose = (await import('mongoose')).default;
-  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-  const isHealthy = dbStatus === 'connected';
-  
-  res.status(isHealthy ? 200 : 503).json({
-    status: isHealthy ? 'healthy' : 'unhealthy',
-    message: isHealthy ? 'Server is running' : 'Server is running but database is disconnected',
-    database: dbStatus,
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Server is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
   });
