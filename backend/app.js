@@ -17,9 +17,10 @@ const app = express();
 // CORS Configuration - Allow multiple origins
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  process.env.VERCEL_FRONTEND_URL,
   'http://localhost:5173',
   'http://localhost:3000',
+  process.env.VERCEL_URL, // Vercel automatically sets this (e.g., https://your-app.vercel.app)
+  process.env.VERCEL_FRONTEND_URL,
 ].filter(Boolean); // Remove undefined values
 
 app.use(
@@ -36,8 +37,7 @@ app.use(
         if (process.env.NODE_ENV === 'development') {
           callback(null, true);
         } else {
-          // In production, check if it's a Vercel preview URL
-          // Vercel preview URLs follow pattern: https://*-*.vercel.app
+          // In production, also allow Vercel preview URLs (pattern: https://*-*.vercel.app)
           const isVercelPreview = origin.includes('.vercel.app');
           if (isVercelPreview) {
             callback(null, true);
@@ -48,9 +48,8 @@ app.use(
       }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 

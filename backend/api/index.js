@@ -1,19 +1,20 @@
+/**
+ * Vercel Serverless Function Entry Point
+ * This file is the entry point for Vercel serverless functions
+ * Located at: backend/api/index.js
+ * 
+ * Vercel will route all requests to /api/* to this function
+ */
+
 import app from '../app.js';
 import connectDB from '../config/database.js';
-import mongoose from 'mongoose';
 
 // Cache MongoDB connection for serverless (reuse across invocations)
 let isConnected = false;
 
 async function ensureDatabaseConnection() {
-  // Check if already connected
-  if (isConnected && mongoose.connection.readyState === 1) {
+  if (isConnected) {
     return;
-  }
-
-  // If connection exists but is not ready, close it first
-  if (mongoose.connection.readyState !== 0) {
-    await mongoose.connection.close();
   }
 
   try {
@@ -33,13 +34,10 @@ export default async function handler(req, res) {
   try {
     await ensureDatabaseConnection();
   } catch (error) {
-    console.error('Database connection failed:', error);
     return res.status(500).json({
       status: 'error',
-      message: 'Database connection failed. Please try again later.',
-      ...(process.env.NODE_ENV === 'development' && {
-        error: error.message,
-      }),
+      message: 'Database connection failed',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 

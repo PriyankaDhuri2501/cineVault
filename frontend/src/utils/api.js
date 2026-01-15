@@ -2,15 +2,17 @@ import axios from 'axios';
 
 /**
  * Axios instance with base configuration
- * Uses environment variable for backend URL in production, or '/api' for development
+ * Uses environment variable for backend URL, or '/api' for relative path (Vercel)
+ * 
+ * For Vercel deployment: Use '/api' (relative path) - Vercel will route to serverless function
+ * For separate backend: Set VITE_API_URL=https://your-backend.vercel.app/api
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Enable credentials for CORS
-  timeout: 30000, // 30 second timeout
+  withCredentials: false, // JWT tokens in headers, not cookies
 });
 
 /**

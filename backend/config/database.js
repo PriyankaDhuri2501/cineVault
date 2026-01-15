@@ -28,7 +28,7 @@ const connectDB = async () => {
     });
 
     cachedConnection = conn;
-    
+
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📊 Database: ${conn.connection.name}`);
     
