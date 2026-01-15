@@ -4,8 +4,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Explicitly deny local network access to prevent permission prompts -->
     <meta http-equiv="Permissions-Policy" content="local-network=()" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <!-- Prevent mixed content -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <title>CineVault - Watch Your Favorite Movies</title>
   </head>
   <body>

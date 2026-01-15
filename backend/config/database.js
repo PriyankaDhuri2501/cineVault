@@ -28,7 +28,7 @@ const connectDB = async () => {
     });
 
     cachedConnection = conn;
-    
+
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📊 Database: ${conn.connection.name}`);
     
@@ -44,11 +44,11 @@ const connectDB = async () => {
 
     // Only set up process handlers in non-serverless environments
     if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-      process.on('SIGINT', async () => {
-        await mongoose.connection.close();
-        console.log('MongoDB connection closed due to app termination');
-        process.exit(0);
-      });
+    process.on('SIGINT', async () => {
+      await mongoose.connection.close();
+      console.log('MongoDB connection closed due to app termination');
+      process.exit(0);
+    });
     }
 
     return conn;
